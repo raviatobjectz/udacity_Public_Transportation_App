@@ -1,0 +1,120 @@
+
+<html lang="en" >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="icons/planner.ico" />
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+  <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+  <link href="css/md-data-table.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="js/md-data-table.js"></script>
+  <script src="js/app.js"></script>
+  <title>Public Transportation</title>
+  <style>
+  input, textarea {
+    max-width:100%
+  }
+</style>
+
+</head>
+<body ng-app="PublicTransportation" ng-controller="appCtrl">
+
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+        <h2>
+          <span>LA Metro Rail - Orange Line</span>
+        </h2>
+        <span flex></span>
+        <md-icon>{{connectionImg}}</md-icon>
+    </div>
+  </md-toolbar>
+  <md-content class="md-padding">
+
+    <form name="projectForm">
+      <div layout-gt-sm="row">
+        <md-input-container class="md-block" flex-gt-sm>
+          <label for="FromStation">Departure *</label>
+          <input list="FromStations" id="FromStation" name="FromStation" ng-model="fromStopName" ng-blur="fromStopNameSelected()" autofocus required />
+          <datalist id="FromStations">
+            <option data-ng-repeat="stopName in stopNames" value="{{stopName}}">
+          </datalist>
+          <div ng-messages="projectForm.FromStation.$error" md-auto-hide="true">
+            <div ng-message="required">
+              Departure Name is required. Only allowed to select an existing value from list.
+            </div>
+          </div>
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm>
+          <label for="ToStation">Arrival *</label>
+          <input list="ToStations" id="ToStation" name="ToStation" ng-model="toStopName" ng-blur="toStopNameSelected()" required />
+          <datalist id="ToStations">
+            <option data-ng-repeat="toStopName in toStopNames" value="{{toStopName}}">
+          </datalist>
+          <div ng-messages="projectForm.ToStation.$error" md-auto-hide="true">
+            <div ng-message="required">
+              Arrival Station is required. Only allowed to select an existing value from list.
+            </div>
+          </div>
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm>
+          <label for="departureTime">Departure Time *</label>
+          <input type="time" id="departureTime" name="departureTime" ng-model="startTime" required />
+          <div ng-messages="projectForm.departureTime.$error" md-auto-hide="true">
+            <div ng-message="required">
+              Departure Time is required
+            </div>
+          </div>
+        </md-input-container>
+
+      </div>
+
+      <div layout-gt-sm="row">
+        <md-button class="md-raised" ng-click="searchTrains()" ng-disabled="!buttonReady || toStopName=='' || startTime=='' || fromStopName==''"> {{buttonText}} </md-button>
+        <md-progress-circular ng-if='!buttonReady' md-mode="indeterminate"></md-progress-circular>
+      </div>
+      <pre ng-if="tableText != ''" style="display:block;padding:9.5px;margin:0 0 10px;font-size:13px;line-height:1.42857143;color:#333;word-break:break-all;word-wrap:break-word;background-color:#f5f5f5;border:1px solid #ccc;border-radius:4px"> {{tableText}} </pre>
+      </form>
+
+        <md-table-container>
+          <table md-table md-row-select ng-model="selected">
+            <thead md-head md-order="query.order">
+              <tr md-row>
+                <th md-column md-order-by="departureTime"><span>Departure Time</span></th>
+                <th md-column md-order-by="FinalDestArrival"><span>Arrival Time</span></th>
+                <th md-column md-order-by="TravelDuration"><span>Travel Duration</span></th>
+                <th md-column md-order-by="tripId"><span>Trip Id</span></th>
+              </tr>
+            </thead>
+            <tbody md-body>
+              <tr md-row md-select="instance" md-select-id="{{instance.departureTime}}" md-auto-select ng-repeat="instance in finalResults | orderBy: query.order | limitTo: query.limit: (query.page - 1) * query.limit">
+                <td md-cell ng-if="instance.FinalDestArrival != ''">{{instance.departureTime}}</td>
+                <td md-cell ng-if="instance.FinalDestArrival != ''">{{instance.FinalDestArrival}}</td>
+                <td md-cell ng-if="instance.FinalDestArrival != ''">{{instance.TravelDuration}}</td>
+                <td md-cell ng-if="instance.FinalDestArrival != ''">{{instance.tripId}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </md-table-container>
+
+        <md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{finalResults.length}}" md-on-paginate="onPaginate" md-page-select></md-table-pagination>
+
+        <div layout-gt-sm="row" ng-show="online == 'Online'">
+          <a class="twitter-timeline" href="https://twitter.com/metrolaalerts" data-widget-id="345645539624353795">Tweets by @metrolaalerts</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+    </md-content>
+</body>
+</html>
+
+<!--
+Copyright 2016 Google Inc. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that can be in foundin the LICENSE file at http://material.angularjs.org/license.
+-->

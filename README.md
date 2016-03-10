@@ -8,8 +8,18 @@ Needs NodeJS & gulp
 
 ## Installation
 
-TBD
+1.) Clone the repository
+
+    git clone https://github.com/raviatobjectz/udacity_Public_Transportation_App.git
+
+2.) run npm install
+
+    npm install
 
 ## Execution
 
-TBD
+1.) Run gulp
+
+    gulp
+
+2.) Open browser and go to the URL mentioned in the gulp output.
