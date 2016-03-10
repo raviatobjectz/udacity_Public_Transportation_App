@@ -12,7 +12,11 @@ Needs NodeJS & gulp
 
     git clone https://github.com/raviatobjectz/udacity_Public_Transportation_App.git
 
-2.) run npm install
+2.) cd into the folder
+
+    cd udacity_Public_Transportation_App
+
+3.) run npm install
 
     npm install
 
