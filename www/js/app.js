@@ -1,13 +1,15 @@
 var app=angular.module('PublicTransportation', ['ngMaterial', 'ngMessages','md.data.table']);
 
 app.controller('appCtrl', function($scope, $rootScope, $mdToast, $document, $timeout, $q, $element, $window) {
+  console.log("I've entered the app controller");
+  $scope.selected = "";
   $scope.globalDate = new Date();
   $scope.globalDate.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'});
   $scope.agencyCode = 'LACMTA';
   $scope.trainStops = [];
   $scope.trainStopTimes = [];
   $scope.results = [];
-  $scope.dbName = "myTrainDb10_in";
+  $scope.dbName = "myTrainDb13_in";
   $scope.search = {};
   $scope.stopNames = [];
   $scope.toStopNames = [];
@@ -17,7 +19,7 @@ app.controller('appCtrl', function($scope, $rootScope, $mdToast, $document, $tim
   $scope.buttonText = 'Getting Ready';
   $scope.buttonReady = false;
   $scope.online = 'Offline';
-  $scope.connectionImg = 'signal_wifi_off';
+  $scope.connectionImg = 'icons/ic_signal_wifi_off_white_24px.svg';
   $scope.query = {
     order: 'name',
     limit: 5,
@@ -28,41 +30,24 @@ app.controller('appCtrl', function($scope, $rootScope, $mdToast, $document, $tim
   $scope.finalResults = [];
   if (navigator.onLine) {
     $scope.online = 'Online';
-    $scope.connectionImg = 'signal_wifi_4_bar';
+    $scope.connectionImg = 'icons/ic_signal_wifi_4_bar_white_24px.svg';
   } else {
     $scope.online = 'Offline';
-    $scope.connectionImg = 'signal_wifi_off';
+    $scope.connectionImg = 'icons/ic_signal_wifi_off_white_24px.svg';
   }
-
-  //$scope.online = 'Offline';
-  //$scope.connectionImg = 'signal_wifi_off';
-
-  /*setTimeout(function(){
-    $scope.online = 'Offline';
-    $scope.connectionImg = 'signal_wifi_off';
-    $scope.$apply();
-  },10000)
-
-  setTimeout(function(){
-    $scope.online = 'Online';
-    $scope.connectionImg = 'signal_wifi_4_bar';
-    $scope.$apply();
-  },20000)
-  */
-
-
 
   $window.addEventListener("offline", function() {
     $scope.online = 'Offline';
-    $scope.connectionImg = 'signal_wifi_off'
+    $scope.connectionImg = 'icons/ic_signal_wifi_off_white_24px.svg'
     $scope.$apply();
     if (($scope.search.dName != '') && ($scope.search.dId != '') && ($scope.search.aName != '') && ($scope.search.aId != '') && ($scope.search.sTime != '')) {
       $scope.searchTrains();
     }
   }, false);
+
   $window.addEventListener("online", function() {
     $scope.online = 'Online';
-    $scope.connectionImg = 'signal_wifi_4_bar'
+    $scope.connectionImg = 'icons/ic_signal_wifi_4_bar_white_24px.svg'
     $scope.$apply();
     if (($scope.search.dName != '') && ($scope.search.dId != '') && ($scope.search.aName != '') && ($scope.search.aId != '') && ($scope.search.sTime != '')) {
       $scope.searchTrains();
@@ -111,7 +96,6 @@ app.controller('appCtrl', function($scope, $rootScope, $mdToast, $document, $tim
         alert('open error');
       };
       request.onsuccess = function(event) {
-          console.log('event');
           $scope.buttonText = 'Trip Planner';
           $scope.buttonReady = true;
           $scope.$apply();
@@ -164,7 +148,7 @@ app.controller('appCtrl', function($scope, $rootScope, $mdToast, $document, $tim
         }
       }
     }
-    $scope.$apply();
+    //$scope.$apply();
   }
 
   $scope.toStopNameSelected = function() {
@@ -177,9 +161,8 @@ app.controller('appCtrl', function($scope, $rootScope, $mdToast, $document, $tim
     if (flag == 0) {
       $scope.toStopName = "";
     }
-    $scope.$apply();
+    //$scope.$apply();
   }
-
 
   $scope.searchTrains = function() {
     $scope.search = {
